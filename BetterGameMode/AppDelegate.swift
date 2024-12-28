@@ -52,38 +52,38 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		menu.removeAllItems()
 		
 		if status.isInstalled == .unknown {
-			menu.addItem(withTitle: "Failed to Check on Game Mode Status", action: nil, keyEquivalent: "")
-			menu.addItem(withTitle: "Check Console.app for details.", action: nil, keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuCantCheckStatus1", comment: ""), action: nil, keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuCantCheckStatus2", comment: ""), action: nil, keyEquivalent: "")
 		}
 		if status.isInstalled == .notInstalled {
-			menu.addItem(withTitle: "Xcode is Not Installed", action: nil, keyEquivalent: "")
-			menu.addItem(withTitle: "Sorry, but this app requires Xcode to be installed in order to work.", action: nil, keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuNoXcode1", comment: ""), action: nil, keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuNoXcode2", comment: ""), action: nil, keyEquivalent: "")
 		} else {
 			switch (status.enablementPolicy) {
 			case .automatic:
-				menu.addItem(withTitle: "Current Game Mode Enablement Policy: Automatic", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyAutomatic", comment: ""), action: nil, keyEquivalent: "")
 			case .unknown:
-				menu.addItem(withTitle: "Unable to Determine Game Mode Enablement Policy", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyUnknown", comment: ""), action: nil, keyEquivalent: "")
 			case .disabled:
-				menu.addItem(withTitle: "Current Game Mode Enablement Policy: Manual", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyManual", comment: ""), action: nil, keyEquivalent: "")
 			}
 			
 			switch (status.gameMode) {
 			case .unknown:
-				menu.addItem(withTitle: "Unable to Determine Game Mode Status", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeUnknown", comment: ""), action: nil, keyEquivalent: "")
 			case .enabled:
-				menu.addItem(withTitle: "Game Mode: On", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeOn", comment: ""), action: nil, keyEquivalent: "")
 			case .disabled:
-				menu.addItem(withTitle: "Game Mode: Off or Paused", action: nil, keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeOff", comment: ""), action: nil, keyEquivalent: "")
 			}
 			
 			menu.addItem(NSMenuItem.separator())
-			menu.addItem(withTitle: "Automatically Enable Game Mode (default)", action: #selector(automaticallyEnableGameMode), keyEquivalent: "")
-			menu.addItem(withTitle: "Force Enable Game Mode", action: #selector(enableGameMode), keyEquivalent: "")
-			menu.addItem(withTitle: "Force Disable Game Mode", action: #selector(disableGameMode), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceAutomatic", comment: ""), action: #selector(automaticallyEnableGameMode), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOn", comment: ""), action: #selector(enableGameMode), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameMode), keyEquivalent: "")
 			menu.addItem(NSMenuItem.separator())
 		}
-		menu.addItem(NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: ""))
+		menu.addItem(withTitle: NSLocalizedString("MenuQuit", comment: ""), action: #selector(quit), keyEquivalent: "")
 	}
 	
 	func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {

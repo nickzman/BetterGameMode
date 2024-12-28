@@ -1,0 +1,160 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "MenuCantCheckStatus1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to Check on Game Mode Status"
+          }
+        }
+      }
+    },
+    "MenuCantCheckStatus2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Console.app for details."
+          }
+        }
+      }
+    },
+    "MenuGameModeEnablementPolicyAutomatic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Game Mode Enablement Policy: Automatic"
+          }
+        }
+      }
+    },
+    "MenuGameModeEnablementPolicyManual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Game Mode Enablement Policy: Manual"
+          }
+        }
+      }
+    },
+    "MenuGameModeEnablementPolicyUnknown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to Determine Game Mode Enablement Policy"
+          }
+        }
+      }
+    },
+    "MenuGameModeForceAutomatic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatically Enable Game Mode (default)"
+          }
+        }
+      }
+    },
+    "MenuGameModeForceOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force Disable Game Mode"
+          }
+        }
+      }
+    },
+    "MenuGameModeForceOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force Enable Game Mode"
+          }
+        }
+      }
+    },
+    "MenuGameModeOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Mode: Off"
+          }
+        }
+      }
+    },
+    "MenuGameModeOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Mode: On"
+          }
+        }
+      }
+    },
+    "MenuGameModeUnknown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to Determine Game Mode Status"
+          }
+        }
+      }
+    },
+    "MenuNoXcode1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xcode is Not Installed"
+          }
+        }
+      }
+    },
+    "MenuNoXcode2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorry, but this app requires Xcode 15.0 or later to be installed in order to work."
+          }
+        }
+      }
+    },
+    "MenuQuit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
