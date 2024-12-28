@@ -156,7 +156,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		do {
 			output = try fileHandle.readToEnd()
 		} catch {
-			output = nil
+			Logger().error("Failed to read output from gamepolicyctl due to an error: \(error)")
+			return (.unknown, .unknown, .unknown)
 		}
 		guard let outputString = String(data: output ?? Data(), encoding: .utf8) else {
 			return (.unknown, .unknown, .unknown)
