@@ -169,10 +169,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			return (.notInstalled, .unknown, .unknown)
 		}
 		
-		if outputString.contains("Game mode is \u{1B}[0;31moff") {
+		do {
+			if outputString.contains(try Regex("Game mode is(.+)off")) {
+				gameMode = .disabled
+			} else if outputString.contains(try Regex("Game mode is(.+)on")) {
+				gameMode = .enabled
+			}
+		} catch {
 			gameMode = .disabled
-		} else if outputString.contains("Game mode is \u{1B}[0;32mon") {
-			gameMode = .enabled
 		}
 		
 		if outputString.contains("Game mode enablement policy is currently automatic") {
