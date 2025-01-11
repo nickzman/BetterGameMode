@@ -1,6 +1,50 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "GameModeForcedAutomaticSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitting %@ caused Game Mode to turn off. It will turn back on automatically."
+          }
+        }
+      }
+    },
+    "GameModeForcedAutomaticTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Mode is Back Off"
+          }
+        }
+      }
+    },
+    "GameModeForcedOnSubtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launching %@ caused Game Mode to be forced on."
+          }
+        }
+      }
+    },
+    "GameModeForcedOnTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Mode Forced On"
+          }
+        }
+      }
+    },
     "MenuCantCheckStatus1" : {
       "extractionState" : "manual",
       "localizations" : {
