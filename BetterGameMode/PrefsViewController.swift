@@ -24,17 +24,19 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		// Update the UI to reflect the user defaults:
 		self.forceGameModeSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) ? .on : .off
 		self.turnGameModeBackToAutomaticSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) ? .on : .off
 		self.appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] ?? []
 		self.appsThatForceOnTableView.reloadData()
 		
+		// Disable controls for preferences that don't do anything if force gaming mode isn't on:
 		self.turnGameModeBackToAutomaticSwitch.isEnabled = self.forceGameModeSwitch.state == .on
 		self.appsThatForceOnTableView.isEnabled = self.forceGameModeSwitch.state == .on
 		self.addApplicationButton.isEnabled = self.forceGameModeSwitch.state == .on
 	}
 	
-	// !MARK: Table view data source
+	// MARK: Table view data source
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
 		return self.appBundleIDsThatForceOn.count
@@ -44,7 +46,7 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 		let cell = tableView.makeView(withIdentifier: tableColumn!.identifier, owner: nil) as! NSTableCellView
 		let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: self.appBundleIDsThatForceOn[row])
 		
-		if appURL != nil {
+		if appURL != nil {	// is the app installed, according to Launch Services?
 			let bundle = Bundle(url: appURL!)
 			
 			cell.imageView?.image = NSWorkspace.shared.icon(forFile: appURL!.path)
@@ -52,20 +54,20 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 				cell.textField?.stringValue = (bundle!.localizedInfoDictionary?[String(kCFBundleNameKey)] as? String ?? "")
 			}
 			cell.textField?.stringValue = appURL!.lastPathComponent
-		} else {
+		} else {	// if not, then just print the bundle ID so the user can at least delete it
 			cell.imageView?.image = nil
-			cell.textField?.stringValue = self.appBundleIDsThatForceOn[row]
+			cell.textField?.stringValue = "(\(self.appBundleIDsThatForceOn[row]))"
 		}
 		return cell
 	}
 	
-	// !MARK: Table view delegate
+	// MARK: Table view delegate
 	
 	func tableViewSelectionDidChange(_ notification: Notification) {
-		self.removeApplicationButton.isEnabled = self.appsThatForceOnTableView.selectedRowIndexes.count > 0
+		self.removeApplicationButton.isEnabled = self.appsThatForceOnTableView.selectedRowIndexes.count > 0	// the remove button needs something selected for it to work
 	}
 	
-	// !MARK: Actions
+	// MARK: Actions
 	
 	@IBAction func addApplicationAction(_ sender: Any) {
 		let openPanel = NSOpenPanel()
@@ -73,9 +75,9 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 		openPanel.allowsMultipleSelection = false
 		openPanel.allowedContentTypes = [.application]
 		openPanel.beginSheetModal(for: self.view.window!) { result in
-			if result.rawValue == NSApplication.ModalResponse.OK.rawValue {
+			if result == .OK {
 				let appURL = openPanel.url!
-				if let appBundle = Bundle(url: appURL) {
+				if let appBundle = Bundle(url: appURL) {	// we need to load the app's bundle identifier
 					if let appBundleIdentifier = appBundle.bundleIdentifier {
 						self.appBundleIDsThatForceOn.append(appBundleIdentifier)
 						self.appsThatForceOnTableView.insertRows(at: IndexSet(integer: self.appBundleIDsThatForceOn.count - 1), withAnimation: .effectFade)
@@ -86,6 +88,8 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 		}
 	}
 	
+	// MARK: Actions
+	
 	@IBAction func forceGameModeAction(_ sender: Any) {
 		if self.forceGameModeSwitch.state == .on {
 			UserDefaults.standard.set(true, forKey: PrefsViewController.forceGameModeKey)
@@ -93,7 +97,7 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 			self.appsThatForceOnTableView.isEnabled = true
 			self.addApplicationButton.isEnabled = true
 			self.removeApplicationButton.isEnabled = self.appsThatForceOnTableView.selectedRow >= 0
-		} else {
+		} else {	// disable all controls for things that don't do anything if this setting is disabled
 			UserDefaults.standard.set(false, forKey: PrefsViewController.forceGameModeKey)
 			self.turnGameModeBackToAutomaticSwitch.isEnabled = false
 			self.appsThatForceOnTableView.isEnabled = false
@@ -103,13 +107,13 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	}
 	
 	@IBAction func launchOnLoginAction(_ sender: Any) {
-		
+		// TODO: Fill in here
 	}
 	
 	@IBAction func removeApplicationAction(_ sender: Any) {
 		let selectedRow = self.appsThatForceOnTableView.selectedRow
 		
-		if selectedRow >= 0 {
+		if selectedRow >= 0 {	// sanity check: don't crash if nothing is selected
 			self.appBundleIDsThatForceOn.remove(at: selectedRow)
 			self.appsThatForceOnTableView.removeRows(at: IndexSet(integer: selectedRow), withAnimation: .effectFade)
 			UserDefaults.standard.set(self.appBundleIDsThatForceOn, forKey: PrefsViewController.appBundleIDsThatForceOnKey)

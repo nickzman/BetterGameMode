@@ -35,6 +35,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	private var prefsWindowController: NSWindowController?
 	private var statusItem : NSStatusItem!
 	
+	// MARK: Application delegate
+	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		let menu = NSMenu()
 		weak var weakSelf = self
@@ -45,35 +47,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		self.statusItem.button?.image = NSImage.init(systemSymbolName: "gamecontroller.circle", accessibilityDescription: nil)
 		menu.delegate = self
 		
+		
+		// Watch for newly launched and terminated applications:
 		self.appLaunchedNotificationObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { aNotification in
-			if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) {
-				if let runningApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
-					if let appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] {
-						if appBundleIDsThatForceOn.contains(runningApp.bundleIdentifier!) {
+			if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) {	// is Force Game Mode On enabled?
+				if let runningApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {	// sanity check - this is an NSRunningApplication, right?
+					if let appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] {	// and we have app bundle IDs that will trigger game mode on if launched?
+						if appBundleIDsThatForceOn.contains(runningApp.bundleIdentifier!) {	// and this is one of those apps?
 							if let strongSelf = weakSelf {
 								strongSelf.setGameModeEnablementPolicyString("on")
 								strongSelf.appsThatEnableGameMode.insert(runningApp)
 							}
 						}
 					}
+				} else {
+					Logger().error("Error! NSWorkspace.applicationUserInfoKey was not an NSRunningApplication for some reason.")
 				}
 			}
 		}
 		self.appTerminatedNotificationObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil) { aNotification in
-			if let terminatedApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+			if let terminatedApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {	// sanity check - this is an NSRunningApplication, right?
 				if let strongSelf = weakSelf {
-					if strongSelf.appsThatEnableGameMode.contains(terminatedApp) {
+					if strongSelf.appsThatEnableGameMode.contains(terminatedApp) {	// and we previously forced game mode on because this app launched?
 						strongSelf.appsThatEnableGameMode.remove(terminatedApp)
-						if UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) {
-							if strongSelf.appsThatEnableGameMode.isEmpty {
-								strongSelf.setGameModeEnablementPolicyString("auto")
-							}
+						if strongSelf.appsThatEnableGameMode.isEmpty && UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) {	// if that was the last app launched that forced game mode on, and the user set the preference to switch it back to automatic, then let's do that
+							strongSelf.setGameModeEnablementPolicyString("auto")
 						}
 					}
 				}
+			} else {
+				Logger().error("Error! NSWorkspace.applicationUserInfoKey was not an NSRunningApplication for some reason.")
 			}
 		}
 	}
+	
+	// MARK: Menu delegate
 	
 	func menuNeedsUpdate(_ menu: NSMenu) {
 		let status = gamePolicyCtlStatus()
@@ -135,29 +143,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		return true
 	}
 	
-	private func setGameModeEnablementPolicyString(_ policyString: String!) {
-		let process = Process()
-		let pipe = Pipe()
-		let fileHandle = pipe.fileHandleForReading
-		
-		process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
-		process.arguments = ["gamepolicyctl", "game-mode", "set", policyString]
-		process.standardOutput = pipe
-		process.standardError = pipe
-		process.launch()
-		process.waitUntilExit()
-		
-		let output: Data?
-		
-		do {
-			output = try fileHandle.readToEnd()
-		} catch {
-			output = nil
-		}
-		guard let outputString = String(data: output ?? Data(), encoding: .utf8) else {
-			return
-		}
-	}
+	// MARK: Actions
 	
 	@objc func automaticallyEnableGameMode(_ sender: Any) {
 		setGameModeEnablementPolicyString("auto")
@@ -188,6 +174,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	@objc func quit(_ sender: Any) {
 		NSApplication.shared.terminate(sender)
 	}
+	
+	// MARK: Internal
 	
 	private func gamePolicyCtlStatus() -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
 		let process = Process()
@@ -235,6 +223,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			enablementPolicy = .disabled
 		}
 		return (.installed, gameMode, enablementPolicy)
+	}
+	
+	private func setGameModeEnablementPolicyString(_ policyString: String!) {
+		let process = Process()
+		let pipe = Pipe()
+		let fileHandle = pipe.fileHandleForReading
+		
+		process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
+		process.arguments = ["gamepolicyctl", "game-mode", "set", policyString]
+		process.standardOutput = pipe
+		process.standardError = pipe
+		process.launch()
+		process.waitUntilExit()
+		
+		let output: Data?
+		
+		do {
+			output = try fileHandle.readToEnd()
+		} catch {
+			output = nil
+		}
+		guard let outputString = String(data: output ?? Data(), encoding: .utf8) else {
+			return
+		}
 	}
 }
 
