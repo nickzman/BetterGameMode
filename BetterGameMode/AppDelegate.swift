@@ -29,6 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	private var enablementPolicy: GameModeEnablementPolicy = .unknown
 	private var gameMode: IsGameModeEnabled = .unknown
 	private var gamePolicyCtlInstalled: IsGamePolicyCtlInstalled = .unknown
+	private var prefsWindowController: NSWindowController?
 	private var statusItem : NSStatusItem!
 	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -83,6 +84,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameMode), keyEquivalent: "")
 			menu.addItem(NSMenuItem.separator())
 		}
+		menu.addItem(withTitle: NSLocalizedString("MenuPrefs", comment: ""), action: #selector(openPreferences), keyEquivalent: "")
+		menu.addItem(NSMenuItem.separator())
 		menu.addItem(withTitle: NSLocalizedString("MenuQuit", comment: ""), action: #selector(quit), keyEquivalent: "")
 	}
 	
@@ -133,6 +136,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	
 	@objc func enableGameMode(_ sender: Any) {
 		setGameModeEnablementPolicyString("on")
+	}
+	
+	@objc func openPreferences(_ sender: Any) {
+		if self.prefsWindowController == nil {
+			self.prefsWindowController = NSStoryboard.main?.instantiateController(withIdentifier: "PreferencesWindow") as? NSWindowController
+		}
+		
+		NSApplication.shared.activate(ignoringOtherApps: true)
+		if !(self.prefsWindowController?.window?.isVisible ?? false) {
+			self.prefsWindowController?.window!.center()
+			self.prefsWindowController?.window!.makeKeyAndOrderFront(sender)
+		} else if self.prefsWindowController?.window != nil {
+			self.prefsWindowController?.window!.makeKeyAndOrderFront(sender)
+		}
 	}
 	
 	@objc func quit(_ sender: Any) {

@@ -144,6 +144,16 @@
         }
       }
     },
+    "MenuPrefs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings…"
+          }
+        }
+      }
+    },
     "MenuQuit" : {
       "extractionState" : "manual",
       "localizations" : {
