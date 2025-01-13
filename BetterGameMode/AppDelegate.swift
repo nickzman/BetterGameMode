@@ -47,10 +47,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		self.statusItem.button?.image = NSImage.init(systemSymbolName: "gamecontroller.circle", accessibilityDescription: nil)
 		menu.delegate = self
 		
-		self.updateStateAndConditionallyInstallNotificationWatchers()
-		
+		// Ask the user if we can send them notifications:
 		UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { (granted, error) in
-			
+		}
+		// Install notifications for when apps are launched and terminated, if gamepolicyctl is installed:
+		self.updateStateAndConditionallyInstallNotificationWatchers()
+		// Also check to see if any currently launched apps should trigger Game Mode. Do this after registering the notification to reduce the chance of an app slipping through due to a race condition.
+		for runningApp in NSWorkspace.shared.runningApplications {
+			self.checkIfRunningApplicationShouldForceOnGameMode(runningApp: runningApp)
 		}
 	}
 	
@@ -157,6 +161,50 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	
 	// MARK: Internal
 	
+	private func checkIfRunningApplicationShouldForceOnGameMode(runningApp: NSRunningApplication!) {
+		if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) {	// is Force Game Mode On enabled?
+			if let appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] {	// and we have app bundle IDs that will trigger game mode on if launched?
+				if let bundleID = runningApp.bundleIdentifier {
+					if appBundleIDsThatForceOn.contains(bundleID) {	// and this is one of those apps?
+						if self.gameMode != .enabled {	// if it's not enabled, let's enable it and tell the user we enabled it
+							let notificationContent = UNMutableNotificationContent()
+							
+							notificationContent.title = NSLocalizedString("GameModeForcedOnTitle", comment: "")
+							notificationContent.body = String(format: NSLocalizedString("GameModeForcedOnSubtitle", comment: ""), runningApp.localizedName ?? "?")
+							
+							let notification = UNNotificationRequest(identifier: "GameModeOn", content: notificationContent, trigger: nil)
+							
+							UNUserNotificationCenter.current().add(notification)
+							self.setGameModeEnablementPolicyString("on")
+							self.enablementPolicy = .disabled	// assume the above worked & update our state accordingly
+							self.gameMode = .enabled
+						}
+						self.appsThatEnableGameMode.insert(runningApp)
+					}
+				}
+			}
+		}
+	}
+	
+	private func checkIfTerminatedApplicationShouldRevertToAutomaticGameMode(terminatedApp: NSRunningApplication!) {
+		if self.appsThatEnableGameMode.contains(terminatedApp) {	// and we previously forced game mode on because this app launched?
+			self.appsThatEnableGameMode.remove(terminatedApp)
+			if self.appsThatEnableGameMode.isEmpty && UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) {	// if that was the last app launched that forced game mode on, and the user set the preference to switch it back to automatic, then let's do that
+				let notificationContent = UNMutableNotificationContent()
+				
+				notificationContent.title = NSLocalizedString("GameModeForcedAutomaticTitle", comment: "")
+				notificationContent.body = String(format: NSLocalizedString("GameModeForcedAutomaticSubtitle", comment: ""), terminatedApp.localizedName ?? "?")
+				
+				let notification = UNNotificationRequest(identifier: "GameModeOff", content: notificationContent, trigger: nil)
+				
+				UNUserNotificationCenter.current().add(notification)
+				self.setGameModeEnablementPolicyString("auto")
+				self.enablementPolicy = .automatic
+				self.gameMode = .disabled
+			}
+		}
+	}
+	
 	private func gamePolicyCtlStatus() -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
 		let process = Process()
 		let pipe = Pipe()
@@ -237,31 +285,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			
 			if appLaunchedNotificationObserver == nil {
 				self.appLaunchedNotificationObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: nil) { aNotification in
-					if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) {	// is Force Game Mode On enabled?
-						if let runningApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {	// sanity check - this is an NSRunningApplication, right?
-							if let appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] {	// and we have app bundle IDs that will trigger game mode on if launched?
-								if appBundleIDsThatForceOn.contains(runningApp.bundleIdentifier!) {	// and this is one of those apps?
-									if let strongSelf = weakSelf {
-										if strongSelf.gameMode != .enabled {	// if it's not enabled, let's enable it and tell the user we enabled it
-											let notificationContent = UNMutableNotificationContent()
-											
-											notificationContent.title = NSLocalizedString("GameModeForcedOnTitle", comment: "")
-											notificationContent.body = String(format: NSLocalizedString("GameModeForcedOnSubtitle", comment: ""), runningApp.localizedName ?? "?")
-											
-											let notification = UNNotificationRequest(identifier: "GameModeOn", content: notificationContent, trigger: nil)
-											
-											UNUserNotificationCenter.current().add(notification)
-											strongSelf.setGameModeEnablementPolicyString("on")
-											strongSelf.enablementPolicy = .disabled	// assume the above worked & update our state accordingly
-											strongSelf.gameMode = .enabled
-										}
-										strongSelf.appsThatEnableGameMode.insert(runningApp)
-									}
-								}
-							}
-						} else {
-							Logger().error("Error! NSWorkspace.applicationUserInfoKey was not an NSRunningApplication for some reason.")
+					if let runningApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {	// sanity check - this is an NSRunningApplication, right?
+						if let strongSelf = weakSelf {
+							strongSelf.checkIfRunningApplicationShouldForceOnGameMode(runningApp: runningApp)
 						}
+					} else {
+						Logger().error("Error! NSWorkspace.applicationUserInfoKey was not an NSRunningApplication for some reason.")
 					}
 				}
 			}
@@ -270,22 +299,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 				self.appTerminatedNotificationObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: nil) { aNotification in
 					if let terminatedApp = aNotification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {	// sanity check - this is an NSRunningApplication, right?
 						if let strongSelf = weakSelf {
-							if strongSelf.appsThatEnableGameMode.contains(terminatedApp) {	// and we previously forced game mode on because this app launched?
-								strongSelf.appsThatEnableGameMode.remove(terminatedApp)
-								if strongSelf.appsThatEnableGameMode.isEmpty && UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) {	// if that was the last app launched that forced game mode on, and the user set the preference to switch it back to automatic, then let's do that
-									let notificationContent = UNMutableNotificationContent()
-									
-									notificationContent.title = NSLocalizedString("GameModeForcedAutomaticTitle", comment: "")
-									notificationContent.body = String(format: NSLocalizedString("GameModeForcedAutomaticSubtitle", comment: ""), terminatedApp.localizedName ?? "?")
-									
-									let notification = UNNotificationRequest(identifier: "GameModeOff", content: notificationContent, trigger: nil)
-									
-									UNUserNotificationCenter.current().add(notification)
-									strongSelf.setGameModeEnablementPolicyString("auto")
-									strongSelf.enablementPolicy = .automatic
-									strongSelf.gameMode = .disabled
-								}
-							}
+							strongSelf.checkIfTerminatedApplicationShouldRevertToAutomaticGameMode(terminatedApp: terminatedApp)
 						}
 					} else {
 						Logger().error("Error! NSWorkspace.applicationUserInfoKey was not an NSRunningApplication for some reason.")
