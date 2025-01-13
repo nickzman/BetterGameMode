@@ -848,6 +848,14 @@
                                     <action selector="removeApplicationAction:" target="XfG-lQ-9wD" id="UUG-0G-C57"/>
                                 </connections>
                             </button>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iuL-9d-pkt">
+                                <rect key="frame" x="457" y="20" width="100" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="{{version label}}" id="29n-Nr-NTZ">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="iX2-y7-3Ce" firstAttribute="centerY" secondItem="pM5-jB-uIP" secondAttribute="centerY" id="0Sb-VF-ud9"/>
@@ -858,6 +866,7 @@
                             <constraint firstItem="XGb-pN-kyV" firstAttribute="centerY" secondItem="05b-Dn-4We" secondAttribute="centerY" id="Dmo-69-lR2"/>
                             <constraint firstItem="1V8-bC-hOP" firstAttribute="centerY" secondItem="ZTT-6V-sYB" secondAttribute="centerY" id="EF1-T9-5Vf"/>
                             <constraint firstItem="UoZ-Q5-K2Y" firstAttribute="top" secondItem="pM5-jB-uIP" secondAttribute="bottom" constant="26" id="HmU-ow-v3E"/>
+                            <constraint firstAttribute="trailing" secondItem="iuL-9d-pkt" secondAttribute="trailing" constant="20" symbolic="YES" id="IvW-pH-ceS"/>
                             <constraint firstItem="1V8-bC-hOP" firstAttribute="leading" secondItem="ZTT-6V-sYB" secondAttribute="trailing" constant="8" symbolic="YES" id="KNq-Gp-Ias"/>
                             <constraint firstItem="iX2-y7-3Ce" firstAttribute="leading" secondItem="pM5-jB-uIP" secondAttribute="trailing" constant="8" symbolic="YES" id="QD5-7I-7i9"/>
                             <constraint firstItem="pM5-jB-uIP" firstAttribute="top" secondItem="ZTT-6V-sYB" secondAttribute="bottom" constant="8" symbolic="YES" id="Teh-hP-czv"/>
@@ -867,6 +876,7 @@
                             <constraint firstItem="ZTT-6V-sYB" firstAttribute="top" secondItem="05b-Dn-4We" secondAttribute="bottom" constant="8" symbolic="YES" id="fT5-hY-YLT"/>
                             <constraint firstItem="Yxn-uq-JeB" firstAttribute="leading" secondItem="SCr-4a-z4x" secondAttribute="trailing" constant="8" symbolic="YES" id="fpZ-3V-2Ll"/>
                             <constraint firstItem="pM5-jB-uIP" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="gMI-Ao-azT"/>
+                            <constraint firstAttribute="bottom" secondItem="iuL-9d-pkt" secondAttribute="bottom" constant="20" symbolic="YES" id="jGn-E8-jOR"/>
                             <constraint firstItem="XGb-pN-kyV" firstAttribute="leading" secondItem="05b-Dn-4We" secondAttribute="trailing" constant="8" symbolic="YES" id="myI-yY-DqN"/>
                             <constraint firstItem="Yxn-uq-JeB" firstAttribute="centerY" secondItem="SCr-4a-z4x" secondAttribute="centerY" id="sC5-Ua-wUh"/>
                             <constraint firstItem="05b-Dn-4We" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="uTI-8L-laR"/>
@@ -879,6 +889,7 @@
                         <outlet property="launchOnLoginSwitch" destination="05b-Dn-4We" id="TBX-S3-BzJ"/>
                         <outlet property="removeApplicationButton" destination="Yxn-uq-JeB" id="Ylq-Sf-d6Y"/>
                         <outlet property="turnGameModeBackToAutomaticSwitch" destination="pM5-jB-uIP" id="2tm-HU-Q3U"/>
+                        <outlet property="versionLabel" destination="iuL-9d-pkt" id="sNw-pU-Wes"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

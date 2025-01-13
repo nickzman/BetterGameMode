@@ -208,6 +208,17 @@
           }
         }
       }
+    },
+    "Version" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@, Copyright © 2025 Nick Zitzmann. All Rights Reserved."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
