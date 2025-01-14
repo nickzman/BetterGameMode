@@ -67,6 +67,17 @@
         }
       }
     },
+    "MenuDownloadXcode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download Xcode from the Mac App Store…"
+          }
+        }
+      }
+    },
     "MenuGameModeEnablementPolicyAutomatic" : {
       "extractionState" : "manual",
       "localizations" : {

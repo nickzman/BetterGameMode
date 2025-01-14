@@ -87,10 +87,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		if self.gamePolicyCtlInstalled == .unknown {
 			menu.addItem(withTitle: NSLocalizedString("MenuCantCheckStatus1", comment: ""), action: nil, keyEquivalent: "")
 			menu.addItem(withTitle: NSLocalizedString("MenuCantCheckStatus2", comment: ""), action: nil, keyEquivalent: "")
+			menu.addItem(NSMenuItem.separator())
 		}
 		if self.gamePolicyCtlInstalled == .notInstalled {
 			menu.addItem(withTitle: NSLocalizedString("MenuNoXcode1", comment: ""), action: nil, keyEquivalent: "")
 			menu.addItem(withTitle: NSLocalizedString("MenuNoXcode2", comment: ""), action: nil, keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuDownloadXcode", comment: ""), action: #selector(downloadXcodeAction), keyEquivalent: "")
+			menu.addItem(NSMenuItem.separator())
 		} else {
 			switch (self.enablementPolicy) {
 			case .automatic:
@@ -142,6 +145,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	
 	@objc func disableGameMode(_ sender: Any) {
 		setGameModeEnablementPolicyString("off")
+	}
+	
+	@objc func downloadXcodeAction(_ sender: Any) {
+		let url = URL(string: "https://apps.apple.com/us/app/xcode/id497799835?mt=12")!
+		
+		NSWorkspace.shared.open(url)
 	}
 	
 	@objc func enableGameMode(_ sender: Any) {
