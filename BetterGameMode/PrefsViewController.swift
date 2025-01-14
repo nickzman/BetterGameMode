@@ -13,6 +13,8 @@
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Cocoa
+import os.log
+import ServiceManagement
 
 class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate {
 	public static let appBundleIDsThatForceOnKey = "AppBundleIDsThatForceOn"
@@ -30,11 +32,14 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	private var appBundleIDsThatForceOn: [String] = []
 	
 	override func viewDidLoad() {
+		let launchOnLoginStatus = SMAppService.mainApp.status
+		
 		super.viewDidLoad()
 		
 		self.versionLabel.stringValue = String(format: NSLocalizedString("Version", comment: ""), Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown")
 		
 		// Update the UI to reflect the user defaults:
+		self.launchOnLoginSwitch.state = launchOnLoginStatus == .enabled ? .on : .off
 		self.forceGameModeSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) ? .on : .off
 		self.turnGameModeBackToAutomaticSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) ? .on : .off
 		self.appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] ?? []
@@ -117,7 +122,19 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	}
 	
 	@IBAction func launchOnLoginAction(_ sender: Any) {
-		// TODO: Fill in here
+		if self.launchOnLoginSwitch.state == .on {
+			do {
+				try SMAppService.mainApp.register()
+			} catch {
+				Logger().error("Error registering app: \(error)")
+			}
+		} else {
+			do {
+				try SMAppService.mainApp.unregister()
+			} catch {
+				Logger().error("Error unregistering app: \(error)")
+			}
+		}
 	}
 	
 	@IBAction func removeApplicationAction(_ sender: Any) {
