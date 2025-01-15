@@ -125,7 +125,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			menu.addItem(withTitle: NSLocalizedString("MenuPrefs", comment: ""), action: #selector(openPreferences), keyEquivalent: "")
 			menu.addItem(NSMenuItem.separator())
 		}
-		menu.addItem(withTitle: NSLocalizedString("MenuQuit", comment: ""), action: #selector(quit), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("MenuQuit", comment: ""), action: #selector(NSApplication.terminate), keyEquivalent: "")
 	}
 	
 	func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -173,10 +173,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		} else if self.prefsWindowController?.window != nil {
 			self.prefsWindowController?.window!.makeKeyAndOrderFront(sender)
 		}
-	}
-	
-	@objc func quit(_ sender: Any) {
-		NSApplication.shared.terminate(sender)
 	}
 	
 	// MARK: Internal
