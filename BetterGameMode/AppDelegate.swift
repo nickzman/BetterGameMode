@@ -101,7 +101,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			case .unknown:
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyUnknown", comment: ""), action: nil, keyEquivalent: "")
 			case .disabled:
-				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyManual", comment: ""), action: nil, keyEquivalent: "")
+				if appsThatEnableGameMode.count > 0 {
+					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyForcedOn", comment: ""), action: nil, keyEquivalent: "")
+				} else {
+					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyManual", comment: ""), action: nil, keyEquivalent: "")
+				}
 			}
 			
 			switch (self.gameMode) {

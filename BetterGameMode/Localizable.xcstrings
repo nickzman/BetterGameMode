@@ -89,6 +89,17 @@
         }
       }
     },
+    "MenuGameModeEnablementPolicyForcedOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Game Mode Enablement Policy: Forced On by BetterGameMode"
+          }
+        }
+      }
+    },
     "MenuGameModeEnablementPolicyManual" : {
       "extractionState" : "manual",
       "localizations" : {
