@@ -54,6 +54,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		self.statusItem.button?.image = NSImage.init(systemSymbolName: "gamecontroller.circle", accessibilityDescription: nil)
 		menu.delegate = self
 		
+		// Enable some default defaults. Add some fairly common apps that could benefit from Game Mode being on:
+		UserDefaults.standard.register(defaults: [PrefsViewController.forceGameModeKey: true,
+												  PrefsViewController.turnGameModeBackToAutomaticKey: true, PrefsViewController.appBundleIDsThatForceOnKey: [
+													"com.codeweavers.CrossOver",		// CrossOver
+													"com.nvidia.gfnpc.mall",			// GeForce NOW
+													"com.heroicgameslauncher.hgl",		// Heroic Games Launcher
+													"com.parallels.desktop.appstore",	// Parallels Desktop (App Store version)
+													"com.parallels.desktop.console",	// Parallels Desktop (ad-hoc version)
+													"com.playstation.RemotePlay",		// PS Remote Play
+													"com.libretro.dist.RetroArch",		// RetroArch
+													"com.vmware.fusion",				// VMware Fusion
+													"com.isaacmarovitz.Whisky"			// Whisky
+												  ]])
+		
 		// Ask the user if we can send them notifications:
 		UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { (granted, error) in
 		}
