@@ -6,7 +6,7 @@ Game Mode is a feature of macOS which, when enabled, makes the kernel give high 
 
 Game Mode is supposed to automatically start when the user launches a game. However, this does not happen with every game, most notably, some legacy games, as well as emulators (such as OpenEmu or RetroArch), streaming games (such as GeForce NOW or PS Remote Play), games launched by Wine front ends (such as CrossOver or Whisky), or games running in virtual machines (such as Parallels Desktop or VMware Fusion).
 
-BetterGameMode requires an Apple Silicon Mac, macOS 14.0 (Sonoma) or later, and Xcode 15.0 or later. The Apple Silicon requirement is because Game Mode is not available on Intel Macs. The Xcode requirement is because starting and stopping Game Mode on macOS requires a private API, and the only tool that can use that API is the `gamepolicyctl` tool that comes with Xcode. BetterGameMode requires that tool in order to function. For legal reasons, I cannot ship BetterGameMode with the tool included.
+BetterGameMode requires an Apple Silicon Mac, macOS 14.0 (Sonoma) or later, and Xcode 15.0 or later. The Apple Silicon requirement is because Game Mode is not available on Intel Macs. The Xcode requirement is because starting and stopping Game Mode on macOS requires using a private API to talk to `gamepolicyd`, the OS background task that ultimately controls Game Mode, and the only tool that can use that API is the `gamepolicyctl` tool that comes with Xcode. BetterGameMode requires that tool in order to function. For legal reasons, I cannot ship BetterGameMode with the tool included.
 
 ## How to Use BetterGameMode
 
@@ -15,6 +15,8 @@ Once launched, BetterGameMode will add a menu item to your menu bar, that looks 
 In this menu bar, you can see if Game Mode is currently on or off, and whether Game Mode is set to start automatically or manually.
 
 By default, Game Mode is off, and starts automatically when you launch a game that Game Mode recognizes. You can force Game Mode on by clicking on **Force Enable Game Mode**, and prevent it from turning on by clicking on **Force Disable Game Mode**. Switch it back to **Automatically Enable Game Mode** to restore the default behavior. This preference does not survive a logout; it will always go back to automatic the next time you sign into your Mac.
+
+When Game Mode is enabled by either BetterGameMode or the command line, the notification & menu in the menu bar that normally appear when Game Mode automatically starts do not appear. If you want to independently verify that Game Mode is on, you can open Terminal and type `xcrun gamepolicyctl game-mode status` at the command line to see the current status.
 
 ## BetterGameMode Settings
 
