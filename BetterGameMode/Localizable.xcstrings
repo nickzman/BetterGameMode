@@ -177,6 +177,17 @@
         }
       }
     },
+    "MenuGameModeTemporarilyOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Mode: On, Will Soon Turn Off"
+          }
+        }
+      }
+    },
     "MenuGameModeUnknown" : {
       "extractionState" : "manual",
       "localizations" : {

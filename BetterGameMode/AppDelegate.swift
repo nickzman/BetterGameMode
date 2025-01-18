@@ -32,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		case unknown
 		case disabled
 		case enabled
+		case temporarilyEnabled
 	}
 	private var appLaunchedNotificationObserver: NSObjectProtocol?
 	private var appTerminatedNotificationObserver: NSObjectProtocol?
@@ -127,6 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeUnknown", comment: ""), action: nil, keyEquivalent: "")
 			case .enabled:
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeOn", comment: ""), action: nil, keyEquivalent: "")
+			case .temporarilyEnabled:
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeTemporarilyOn", comment: ""), action: nil, keyEquivalent: "")
 			case .disabled:
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeOff", comment: ""), action: nil, keyEquivalent: "")
 			}
@@ -266,10 +269,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		}
 		
 		do {
-			if outputString.contains(try Regex("Game mode is(.+)off")) {
-				gameMode = .disabled
+			if outputString.contains(try Regex("Game mode is(.+)on(.+)Game mode will soon turn off")) {
+				gameMode = .temporarilyEnabled
 			} else if outputString.contains(try Regex("Game mode is(.+)on")) {
 				gameMode = .enabled
+			} else if outputString.contains(try Regex("Game mode is(.+)off")) {
+				gameMode = .disabled
 			}
 		} catch {
 			gameMode = .disabled
