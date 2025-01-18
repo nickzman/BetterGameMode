@@ -12,9 +12,11 @@ BetterGameMode requires an Apple Silicon Mac, macOS 14.0 (Sonoma) or later, and 
 
 Once launched, BetterGameMode will add a menu item to your menu bar, that looks like this: ![image-20250115200953979](image-20250115200953979.png)
 
-In this menu bar, you can see if Game Mode is currently on or off, and whether Game Mode is set to start automatically or manually.
+If the menu item does not appear, then you probably have too many menu items to fit on your screen. Switch applications or remove some menu items and try again.
 
-By default, Game Mode is off, and starts automatically when you launch a game that Game Mode recognizes. You can force Game Mode on by clicking on **Force Enable Game Mode**, and prevent it from turning on by clicking on **Force Disable Game Mode**. Switch it back to **Automatically Enable Game Mode** to restore the default behavior. This preference does not survive a logout; it will always go back to automatic the next time you sign into your Mac.
+In this menu bar, you can see if Game Mode is currently on or off, and whether Game Mode is set to start automatically or manually. Automatically means Game Mode will start automatically when you launch a macOS game as identified by the application's manifest, and the game goes full screen. This is the default behavior.
+
+You can force Game Mode on by clicking on **Force Enable Game Mode**, and prevent it from turning on by clicking on **Force Disable Game Mode**. Switch it back to **Automatically Enable Game Mode** to restore the default behavior. This preference does not survive a logout; it will always go back to automatic the next time you sign into your Mac.
 
 When Game Mode is enabled by either BetterGameMode or the command line, the notification & menu in the menu bar that normally appear when Game Mode automatically starts do not appear. If you want to independently verify that Game Mode is on, you can open Terminal and type `xcrun gamepolicyctl game-mode status` at the command line to see the current status.
 
@@ -22,16 +24,49 @@ When Game Mode is enabled by either BetterGameMode or the command line, the noti
 
 Turn on **Automatically launch BetterGameMode on login** to add the app to your login items. I decided to make auto-launch opt-in instead of opt-out.
 
-**Automatically force Game Mode on when one of these apps are launched** is on by default, so unless you turn this off, BetterGameMode will automatically turn on Game Mode when one of the apps in the table below is launched. (This is different from automatic enablement policy. Automatic enablement policy is a feature of macOS where it will automatically turn on Game Mode in certain games. This feature of BetterGameMode allows you to force Game Mode on when an app is launched that does not cause Game Mode to automatically be turned on.)
+**Automatically force Game Mode on when one of these apps are launched** is on by default, so unless you turn this off, BetterGameMode will automatically turn on Game Mode when one of the apps in the table below is launched. (This is different from automatic enablement policy. Automatic enablement policy is a feature of macOS where it will automatically turn on Game Mode in certain macOS games. This feature of BetterGameMode allows you to force Game Mode on when an app is launched that does not cause Game Mode to automatically be turned on.)
 
 Press the **+** button to add an app to the list. If there's an app you wish to remove from the list, click on it in the list, and press **-**.
 
-The list is already populated with some common third-party Mac apps that, for whatever reason, macOS does not automatically activate Game Mode when they are launched, but would benefit from Game Mode being on when they are launched.
+The list is by default populated with some common third-party Mac apps that, for whatever reason, macOS does not automatically activate Game Mode when they are launched, but would benefit from Game Mode being on when they are launched. They currently are:
+
+- CrossOver (including CrossOver Preview)
+- GeForce NOW
+- Heroic Games Launcher
+- Parallels Desktop (App Store version and non-App Store version; they have two different application bundle identifiers)
+- PS Remote Play
+- RetroArch
+- VMware Fusion
+- Whisky
 
 If you see an app on the list where the name appears in parentheses, then that means the app is not currently installed on your Mac. Feel free to remove it if you wish. If the app is ever (re)installed, then its name will show up on the list.
 
 **Switch Game Mode back to Automatic when none of these apps are running** is also enabled by default, and, while it is enabled, it will automatically switch the Game Mode enablement policy back to Automatic once the last app currently running on the list is quit. But if you want Game Mode to stay on even after the last app is quit for whatever reason, you can switch this off.
 
-That said, I can't recommend keeping Game Mode on long-term, especially on a laptop running on its battery. Turning it off when it's not needed ought to reduce the computer's power usage.
+That said, I can't recommend keeping Game Mode on long-term, especially on a MacBook running on its battery, because it consumes extra battery power. Turning it off when it's not needed ought to reduce the computer's power usage.
 
 If you want to force Game Mode from ever activating, then disable **Automatically force Game Mode on when one of these apps are launched**, and enable **Automatically force Game Mode off**.
+
+## Q&A
+
+### Can BetterGameMode force on Game Mode when a Windows game starts in Wine, or in a virtual machine?
+
+Unfortunately no. The app is not notified when a Windows game is started.
+
+You can still use BetterGameMode with a Wine front end or virtual machine; you just need to force Game Mode on when that front end starts up.
+
+### Can BetterGameMode force on Game Mode when I visit a certain website in my browser?
+
+No, for obvious privacy reasons.
+
+### I forced Game Mode off, but when I launch a game, macOS puts up a notification & menu item saying it is on. What gives?
+
+I noticed that, too, in macOS 15. I think it may be a bug in the macOS menu item that appears when a game is launched that automatically starts Game Mode (outside of BetterGameMode). If you read the console log, and search for log entries from `gamepolicyd`, or run `xcrun gamepolicyctl game-mode status` from the command line, you can see that Game Mode wasn't really enabled.
+
+## BetterGameMode & Your Privacy
+
+BetterGameMode doesn’t collect any personal data on you, and doesn't use the Internet at all.
+
+## Hey! Want to make a localization?
+
+If you have a Github account, and you can localize the strings in BetterGameMode into another language, please file an issue on [the project](https://github.com/nickzman/BetterGameMode). Pull requests with different language localizations will be reviewed.
