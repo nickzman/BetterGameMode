@@ -89,6 +89,17 @@
         }
       }
     },
+    "MenuGameModeEnablementPolicyForcedOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Game Mode Enablement Policy: Forced Off by BetterGameMode"
+          }
+        }
+      }
+    },
     "MenuGameModeEnablementPolicyForcedOn" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -96,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current Game Mode Enablement Policy: Forced On by BetterGameMode"
+          }
+        }
+      }
+    },
+    "MenuGameModeEnablementPolicyForcedOnApps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following apps forced on Game Mode:"
           }
         }
       }
@@ -118,6 +139,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unable to Determine Game Mode Enablement Policy"
+          }
+        }
+      }
+    },
+    "MenuGameModeEnablementPolicyUnknownApp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(unknown)"
           }
         }
       }

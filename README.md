@@ -22,7 +22,7 @@ Turn on **Automatically launch BetterGameMode on login** to add the app to your 
 
 **Automatically force Game Mode on when one of these apps are launched** is on by default, so unless you turn this off, BetterGameMode will automatically turn on Game Mode when one of the apps in the table below is launched. (This is different from automatic enablement policy. Automatic enablement policy is a feature of macOS where it will automatically turn on Game Mode in certain games. This feature of BetterGameMode allows you to force Game Mode on when an app is launched that does not cause Game Mode to automatically be turned on.)
 
-Press the **+** button to add an app to the list. If there's an app you wish to remove from the list, click on it in the list, and press **-**. Changes will take effect the next time the app is launched if it is already open.
+Press the **+** button to add an app to the list. If there's an app you wish to remove from the list, click on it in the list, and press **-**.
 
 The list is already populated with some common third-party Mac apps that, for whatever reason, macOS does not automatically activate Game Mode when they are launched, but would benefit from Game Mode being on when they are launched.
 
@@ -31,3 +31,5 @@ If you see an app on the list where the name appears in parentheses, then that m
 **Switch Game Mode back to Automatic when none of these apps are running** is also enabled by default, and, while it is enabled, it will automatically switch the Game Mode enablement policy back to Automatic once the last app currently running on the list is quit. But if you want Game Mode to stay on even after the last app is quit for whatever reason, you can switch this off.
 
 That said, I can't recommend keeping Game Mode on long-term, especially on a laptop running on its battery. Turning it off when it's not needed ought to reduce the computer's power usage.
+
+If you want to force Game Mode from ever activating, then disable **Automatically force Game Mode on when one of these apps are launched**, and enable **Automatically force Game Mode off**.

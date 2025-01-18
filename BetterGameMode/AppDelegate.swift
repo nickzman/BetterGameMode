@@ -56,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		menu.delegate = self
 		
 		// Enable some default defaults. Add some fairly common apps that could benefit from Game Mode being on:
-		UserDefaults.standard.register(defaults: [PrefsViewController.forceGameModeKey: true,
+		UserDefaults.standard.register(defaults: [PrefsViewController.forceGameModeOnKey: true,
 												  PrefsViewController.turnGameModeBackToAutomaticKey: true, PrefsViewController.appBundleIDsThatForceOnKey: [
 													"com.codeweavers.CrossOver",		// CrossOver
 													"com.nvidia.gfnpc.mall",			// GeForce NOW
@@ -74,10 +74,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		}
 		// Install notifications for when apps are launched and terminated, if gamepolicyctl is installed:
 		self.updateStateAndConditionallyInstallNotificationWatchers()
+		// Watch for preference changes:
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsChangedNotification), name: UserDefaults.didChangeNotification, object: nil)
 		// Also check to see if any currently launched apps should trigger Game Mode. Do this after registering the notification to reduce the chance of an app slipping through due to a race condition.
-		for runningApp in NSWorkspace.shared.runningApplications {
-			self.checkIfRunningApplicationShouldForceOnGameMode(runningApp: runningApp)
-		}
+		self.userDefaultsChangedNotification(nil)
 	}
 	
 	func applicationWillTerminate(_ notification: Notification) {
@@ -116,8 +116,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			case .unknown:
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyUnknown", comment: ""), action: nil, keyEquivalent: "")
 			case .disabled:
-				if appsThatEnableGameMode.count > 0 {
+				if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOffKey) {
+					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyForcedOff", comment: ""), action: nil, keyEquivalent: "")
+				} else if self.appsThatEnableGameMode.count > 0 {
 					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyForcedOn", comment: ""), action: nil, keyEquivalent: "")
+					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyForcedOnApps", comment: ""), action: nil, keyEquivalent: "")
+					for app in self.appsThatEnableGameMode {
+						menu.addItem(withTitle: "\t\(app.localizedName ?? app.executableURL?.lastPathComponent ?? NSLocalizedString("MenuGameModeEnablementPolicyUnknownApp", comment: ""))", action: nil, keyEquivalent: "")
+					}
 				} else {
 					menu.addItem(withTitle: NSLocalizedString("MenuGameModeEnablementPolicyManual", comment: ""), action: nil, keyEquivalent: "")
 				}
@@ -135,9 +141,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			}
 			
 			menu.addItem(NSMenuItem.separator())
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceAutomatic", comment: ""), action: #selector(automaticallyEnableGameMode), keyEquivalent: "")
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOn", comment: ""), action: #selector(enableGameMode), keyEquivalent: "")
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameMode), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceAutomatic", comment: ""), action: #selector(automaticallyEnableGameModeAction), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOn", comment: ""), action: #selector(enableGameModeAction), keyEquivalent: "")
+			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameModeAction), keyEquivalent: "")
 			menu.addItem(NSMenuItem.separator())
 			menu.addItem(withTitle: NSLocalizedString("MenuPrefs", comment: ""), action: #selector(openPreferences), keyEquivalent: "")
 			menu.addItem(NSMenuItem.separator())
@@ -146,13 +152,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	}
 	
 	func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-		if menuItem.action == #selector(automaticallyEnableGameMode) {
+		if menuItem.action == #selector(automaticallyEnableGameModeAction) {
 			menuItem.state = self.enablementPolicy == .automatic ? .on : .off
 		}
-		if menuItem.action == #selector(enableGameMode) {
+		if menuItem.action == #selector(enableGameModeAction) {
 			menuItem.state = self.enablementPolicy == .disabled && self.gameMode == .enabled ? .on : .off
 		}
-		if menuItem.action == #selector(disableGameMode) {
+		if menuItem.action == #selector(disableGameModeAction) {
 			menuItem.state = self.enablementPolicy == .disabled && self.gameMode == .disabled ? .on : .off
 		}
 		return true
@@ -160,12 +166,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	
 	// MARK: Actions
 	
-	@objc func automaticallyEnableGameMode(_ sender: Any) {
-		setGameModeEnablementPolicyString("auto")
+	@objc func automaticallyEnableGameModeAction(_ sender: Any?) {
+		self.automaticallyEnableGameMode()
+		self.appsThatEnableGameMode.removeAll()	// because the user forced an action, reset this set
 	}
 	
-	@objc func disableGameMode(_ sender: Any) {
-		setGameModeEnablementPolicyString("off")
+	@objc func disableGameModeAction(_ sender: Any?) {
+		self.disableGameMode()
+		self.appsThatEnableGameMode.removeAll()
 	}
 	
 	@objc func downloadXcodeAction(_ sender: Any) {
@@ -174,8 +182,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		NSWorkspace.shared.open(url)
 	}
 	
-	@objc func enableGameMode(_ sender: Any) {
-		setGameModeEnablementPolicyString("on")
+	@objc func enableGameModeAction(_ sender: Any?) {
+		self.enableGameMode()
 	}
 	
 	@objc func openPreferences(_ sender: Any) {
@@ -192,10 +200,59 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		}
 	}
 	
+	// MARK: Notifications
+	
+	@objc func userDefaultsChangedNotification(_ notification: Notification?) {
+		// Sanity check: if there turns out to be some bug in the app where the user somehow turned both force-on and force-off at once, or if the user screwed around with the user defaults behind the app's back, then we override this with force-on.
+		if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOnKey) && UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOffKey) {
+			NotificationCenter.default.removeObserver(self, name: UserDefaults.didChangeNotification, object: nil)
+			UserDefaults.standard.set(false, forKey: PrefsViewController.forceGameModeOffKey)
+			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsChangedNotification), name: UserDefaults.didChangeNotification, object: nil)
+		}
+		
+		// Conditionally force Game Mode off if the user willed it:
+		if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOffKey) {
+			self.disableGameMode()
+		} else if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOnKey) {
+			// If Game Mode was forced off, then put it back on automatic:
+			if self.enablementPolicy == .disabled && self.gameMode == .disabled {
+				self.automaticallyEnableGameMode()
+			}
+			
+			let enabledBundleIDs = UserDefaults.standard.stringArray(forKey: PrefsViewController.appBundleIDsThatForceOnKey) ?? []
+			
+			// Check to see if the user removed an app that forced Game Mode on previously. If they did, then we should see if we should take it back to automatic:
+			for appThatEnabledGameMode in self.appsThatEnableGameMode {
+				if let bundleIdentifier = appThatEnabledGameMode.bundleIdentifier {
+					if !enabledBundleIDs.contains(bundleIdentifier) {
+						self.checkIfTerminatedApplicationShouldRevertToAutomaticGameMode(terminatedApp: appThatEnabledGameMode)
+					}
+				}
+			}
+			
+			// Check to see if any currently launched apps should trigger Game Mode. Do this after registering the notification to reduce the chance of an app slipping through due to a race condition.
+			for runningApp in NSWorkspace.shared.runningApplications {
+				self.checkIfRunningApplicationShouldForceOnGameMode(runningApp: runningApp)
+			}
+		} else {
+			// If both are off, then go back to Automatic as needed:
+			if self.enablementPolicy == .disabled {
+				self.automaticallyEnableGameMode()
+			}
+			self.appsThatEnableGameMode.removeAll()
+		}
+	}
+	
 	// MARK: Internal
 	
+	private func automaticallyEnableGameMode() {
+		setGameModeEnablementPolicyString("auto")
+		self.enablementPolicy = .automatic
+		// We don't know if the OS will turn it on or off immediately or not...
+	}
+	
 	private func checkIfRunningApplicationShouldForceOnGameMode(runningApp: NSRunningApplication!) {
-		if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeKey) {	// is Force Game Mode On enabled?
+		if UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOnKey) {	// is Force Game Mode On enabled?
 			if let appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] {	// and we have app bundle IDs that will trigger game mode on if launched?
 				if let bundleID = runningApp.bundleIdentifier {
 					if appBundleIDsThatForceOn.contains(bundleID) {	// and this is one of those apps?
@@ -208,9 +265,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 							let notification = UNNotificationRequest(identifier: "GameModeOn", content: notificationContent, trigger: nil)
 							
 							UNUserNotificationCenter.current().add(notification)
-							self.setGameModeEnablementPolicyString("on")
-							self.enablementPolicy = .disabled	// assume the above worked & update our state accordingly
-							self.gameMode = .enabled
+							self.enableGameMode()
 						}
 						self.appsThatEnableGameMode.insert(runningApp)
 					}
@@ -231,11 +286,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 				let notification = UNNotificationRequest(identifier: "GameModeOff", content: notificationContent, trigger: nil)
 				
 				UNUserNotificationCenter.current().add(notification)
-				self.setGameModeEnablementPolicyString("auto")
-				self.enablementPolicy = .automatic
-				self.gameMode = .disabled
+				self.automaticallyEnableGameMode()
 			}
 		}
+	}
+	
+	private func disableGameMode() {
+		setGameModeEnablementPolicyString("off")
+		self.enablementPolicy = .disabled
+		self.gameMode = .disabled
+	}
+	
+	private func enableGameMode() {
+		setGameModeEnablementPolicyString("on")
+		self.enablementPolicy = .disabled
+		self.gameMode = .enabled
 	}
 	
 	private func gamePolicyCtlStatus() -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
