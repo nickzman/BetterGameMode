@@ -246,9 +246,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	// MARK: Internal
 	
 	private func automaticallyEnableGameMode() {
-		setGameModeEnablementPolicyString("auto")
-		self.enablementPolicy = .automatic
-		// We don't know if the OS will turn it on or off immediately or not...
+		if self.setGameModeEnablementPolicyString("auto") {
+			self.enablementPolicy = .automatic
+			self.gameMode = .disabled	// we actually don't know if the OS will turn it on or off immediately, but we need to assume it's off, or the next attempt to turn it on when an app is launched will fail
+		}
 	}
 	
 	private func checkIfRunningApplicationShouldForceOnGameMode(runningApp: NSRunningApplication!) {
@@ -292,15 +293,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	}
 	
 	private func disableGameMode() {
-		setGameModeEnablementPolicyString("off")
-		self.enablementPolicy = .disabled
-		self.gameMode = .disabled
+		if self.setGameModeEnablementPolicyString("off") {
+			self.enablementPolicy = .disabled
+			self.gameMode = .disabled
+		}
 	}
 	
 	private func enableGameMode() {
-		setGameModeEnablementPolicyString("on")
-		self.enablementPolicy = .disabled
-		self.gameMode = .enabled
+		if setGameModeEnablementPolicyString("on") {
+			self.enablementPolicy = .disabled
+			self.gameMode = .enabled
+		}
 	}
 	
 	private func gamePolicyCtlStatus() -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
@@ -353,7 +356,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		return (.installed, gameMode, enablementPolicy)
 	}
 	
-	private func setGameModeEnablementPolicyString(_ policyString: String!) {
+	private func setGameModeEnablementPolicyString(_ policyString: String!) -> Bool {
 		let process = Process()
 		let pipe = Pipe()
 		let fileHandle = pipe.fileHandleForReading
@@ -373,8 +376,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			output = nil
 		}
 		guard let outputString = String(data: output ?? Data(), encoding: .utf8) else {
-			return
+			return false
 		}
+		return outputString.contains(policyString)
 	}
 	
 	private func updateStateAndConditionallyInstallNotificationWatchers() {
