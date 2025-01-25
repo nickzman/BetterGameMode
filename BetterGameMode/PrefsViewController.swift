@@ -161,11 +161,11 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	}
 	
 	@IBAction func removeApplicationAction(_ sender: Any) {
-		let selectedRow = self.appsThatForceOnTableView.selectedRow
+		let selectedRows = self.appsThatForceOnTableView.selectedRowIndexes
 		
-		if selectedRow >= 0 {	// sanity check: don't crash if nothing is selected
-			self.appBundleIDsThatForceOn.remove(at: selectedRow)
-			self.appsThatForceOnTableView.removeRows(at: IndexSet(integer: selectedRow), withAnimation: .effectFade)
+		if selectedRows.count >= 0 {	// sanity check: don't crash if nothing is selected
+			self.appBundleIDsThatForceOn.remove(atOffsets: selectedRows)
+			self.appsThatForceOnTableView.removeRows(at: selectedRows, withAnimation: .effectFade)
 			UserDefaults.standard.set(self.appBundleIDsThatForceOn, forKey: PrefsViewController.appBundleIDsThatForceOnKey)
 		}
 	}
