@@ -24,11 +24,11 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	
 	@IBOutlet weak var addApplicationButton: NSButton!
 	@IBOutlet weak var appsThatForceOnTableView: NSTableView!
-	@IBOutlet weak var forceGameModeOffSwitch: NSSwitch!
-	@IBOutlet weak var forceGameModeOnSwitch: NSSwitch!
-	@IBOutlet weak var launchOnLoginSwitch: NSSwitch!
+	@IBOutlet weak var forceGameModeOffCheckbox: NSButton!
+	@IBOutlet weak var forceGameModeOnCheckbox: NSButton!
+	@IBOutlet weak var launchOnLoginCheckbox: NSButton!
 	@IBOutlet weak var removeApplicationButton: NSButton!
-	@IBOutlet weak var turnGameModeBackToAutomaticSwitch: NSSwitch!
+	@IBOutlet weak var turnGameModeBackToAutomaticCheckbox: NSButton!
 	@IBOutlet weak var versionLabel: NSTextField!
 	
 	private var appBundleIDsThatForceOn: [String] = []
@@ -41,19 +41,19 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 		self.versionLabel.stringValue = String(format: NSLocalizedString("Version", comment: ""), Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown")
 		
 		// Update the UI to reflect the user defaults:
-		self.launchOnLoginSwitch.state = launchOnLoginStatus == .enabled ? .on : .off
-		self.forceGameModeOnSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOnKey) ? .on : .off
-		self.turnGameModeBackToAutomaticSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) ? .on : .off
-		self.forceGameModeOffSwitch.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOffKey) ? .on : .off
+		self.launchOnLoginCheckbox.state = launchOnLoginStatus == .enabled ? .on : .off
+		self.forceGameModeOnCheckbox.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOnKey) ? .on : .off
+		self.turnGameModeBackToAutomaticCheckbox.state = UserDefaults.standard.bool(forKey: PrefsViewController.turnGameModeBackToAutomaticKey) ? .on : .off
+		self.forceGameModeOffCheckbox.state = UserDefaults.standard.bool(forKey: PrefsViewController.forceGameModeOffKey) ? .on : .off
 		self.appBundleIDsThatForceOn = UserDefaults.standard.array(forKey: PrefsViewController.appBundleIDsThatForceOnKey) as? [String] ?? []
 		self.appsThatForceOnTableView.reloadData()
 		
 		// Disable controls for preferences that don't do anything if force gaming mode isn't on:
-		self.forceGameModeOnSwitch.isEnabled = self.forceGameModeOffSwitch.state == .off
-		self.turnGameModeBackToAutomaticSwitch.isEnabled = self.forceGameModeOnSwitch.state == .on
-		self.forceGameModeOffSwitch.isEnabled = self.forceGameModeOnSwitch.state == .off
-		self.appsThatForceOnTableView.isEnabled = self.forceGameModeOnSwitch.state == .on
-		self.addApplicationButton.isEnabled = self.forceGameModeOnSwitch.state == .on
+		self.forceGameModeOnCheckbox.isEnabled = self.forceGameModeOffCheckbox.state == .off
+		self.turnGameModeBackToAutomaticCheckbox.isEnabled = self.forceGameModeOnCheckbox.state == .on
+		self.forceGameModeOffCheckbox.isEnabled = self.forceGameModeOnCheckbox.state == .off
+		self.appsThatForceOnTableView.isEnabled = self.forceGameModeOnCheckbox.state == .on
+		self.addApplicationButton.isEnabled = self.forceGameModeOnCheckbox.state == .on
 	}
 	
 	// MARK: Table view data source
@@ -111,33 +111,33 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	// MARK: Actions
 	
 	@IBAction func forceGameModeOffAction(_ sender: Any) {
-		if self.forceGameModeOffSwitch.state == .on {
+		if self.forceGameModeOffCheckbox.state == .on {
 			UserDefaults.standard.set(true, forKey: PrefsViewController.forceGameModeOffKey)
-			self.forceGameModeOnSwitch.isEnabled = false
-			self.turnGameModeBackToAutomaticSwitch.isEnabled = false
+			self.forceGameModeOnCheckbox.isEnabled = false
+			self.turnGameModeBackToAutomaticCheckbox.isEnabled = false
 			self.appsThatForceOnTableView.isEnabled = false
 			self.addApplicationButton.isEnabled = false
 		} else {
 			UserDefaults.standard.set(false, forKey: PrefsViewController.forceGameModeOffKey)
-			self.forceGameModeOnSwitch.isEnabled = true
-			self.turnGameModeBackToAutomaticSwitch.isEnabled = true
+			self.forceGameModeOnCheckbox.isEnabled = true
+			self.turnGameModeBackToAutomaticCheckbox.isEnabled = true
 			self.appsThatForceOnTableView.isEnabled = true
 			self.addApplicationButton.isEnabled = true
 		}
 	}
 	
 	@IBAction func forceGameModeOnAction(_ sender: Any) {
-		if self.forceGameModeOnSwitch.state == .on {
+		if self.forceGameModeOnCheckbox.state == .on {
 			UserDefaults.standard.set(true, forKey: PrefsViewController.forceGameModeOnKey)
-			self.turnGameModeBackToAutomaticSwitch.isEnabled = true
-			self.forceGameModeOffSwitch.isEnabled = false
+			self.turnGameModeBackToAutomaticCheckbox.isEnabled = true
+			self.forceGameModeOffCheckbox.isEnabled = false
 			self.appsThatForceOnTableView.isEnabled = true
 			self.addApplicationButton.isEnabled = true
 			self.removeApplicationButton.isEnabled = self.appsThatForceOnTableView.selectedRow >= 0
 		} else {	// disable all controls for things that don't do anything if this setting is disabled
 			UserDefaults.standard.set(false, forKey: PrefsViewController.forceGameModeOnKey)
-			self.turnGameModeBackToAutomaticSwitch.isEnabled = false
-			self.forceGameModeOffSwitch.isEnabled = true
+			self.turnGameModeBackToAutomaticCheckbox.isEnabled = false
+			self.forceGameModeOffCheckbox.isEnabled = true
 			self.appsThatForceOnTableView.isEnabled = false
 			self.addApplicationButton.isEnabled = false
 			self.removeApplicationButton.isEnabled = false
@@ -145,7 +145,7 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	}
 	
 	@IBAction func launchOnLoginAction(_ sender: Any) {
-		if self.launchOnLoginSwitch.state == .on {
+		if self.launchOnLoginCheckbox.state == .on {
 			do {
 				try SMAppService.mainApp.register()
 			} catch {
@@ -171,7 +171,7 @@ class PrefsViewController: NSViewController, NSTableViewDataSource, NSTableViewD
 	}
 	
 	@IBAction func turnGameModeBackToAutomaticAction(_ sender: Any) {
-		UserDefaults.standard.set(self.turnGameModeBackToAutomaticSwitch.state == .on ? true : false, forKey: PrefsViewController.turnGameModeBackToAutomaticKey)
+		UserDefaults.standard.set(self.turnGameModeBackToAutomaticCheckbox.state == .on ? true : false, forKey: PrefsViewController.turnGameModeBackToAutomaticKey)
 	}
 }
 

@@ -688,7 +688,7 @@
                     <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="575" height="355"/>
+                        <rect key="contentRect" x="196" y="240" width="575" height="360"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
@@ -707,59 +707,57 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="PrefsViewController" customModule="BetterGameMode" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="575" height="355"/>
+                        <rect key="frame" x="0.0" y="0.0" width="575" height="360"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="05b-Dn-4We">
-                                <rect key="frame" x="18" y="311" width="42" height="25"/>
-                                <connections>
-                                    <action selector="launchOnLoginAction:" target="XfG-lQ-9wD" id="K2k-Ks-zHz"/>
-                                </connections>
-                            </switch>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XGb-pN-kyV">
-                                <rect key="frame" x="64" y="316" width="292" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Automatically launch BetterGameMode on login" id="xqH-Kf-YvI">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zIt-iw-DFy">
+                                <rect key="frame" x="18" y="323" width="314" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically launch BetterGameMode on login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MOC-q4-Qsg">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="ZTT-6V-sYB">
-                                <rect key="frame" x="18" y="281" width="42" height="25"/>
+                                </buttonCell>
                                 <connections>
-                                    <action selector="forceGameModeOnAction:" target="XfG-lQ-9wD" id="sF2-Te-uzO"/>
+                                    <action selector="launchOnLoginAction:" target="XfG-lQ-9wD" id="PN3-3x-J1G"/>
                                 </connections>
-                            </switch>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1V8-bC-hOP">
-                                <rect key="frame" x="64" y="286" width="437" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Automatically force Game Mode on when one of these apps is launched" id="GBM-wn-slb">
-                                    <font key="font" usesAppearanceFont="YES"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="pM5-jB-uIP">
-                                <rect key="frame" x="18" y="251" width="42" height="25"/>
-                                <connections>
-                                    <action selector="turnGameModeBackToAutomaticAction:" target="XfG-lQ-9wD" id="nbc-Y3-RI1"/>
-                                </connections>
-                            </switch>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iX2-y7-3Ce">
-                                <rect key="frame" x="64" y="256" width="463" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Switch Game Mode back to Automatic when none of these apps are running" id="JlB-7j-IVc">
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BWt-m2-Jfg">
+                                <rect key="frame" x="18" y="301" width="459" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically force Game Mode on when one of these apps is launched" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CWh-DM-HEM">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="forceGameModeOnAction:" target="XfG-lQ-9wD" id="xFd-NR-grl"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PZg-Aq-YLz">
+                                <rect key="frame" x="36" y="279" width="485" height="18"/>
+                                <buttonCell key="cell" type="check" title="Switch Game Mode back to Automatic when none of these apps are running" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="WGZ-Yz-JUq">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="turnGameModeBackToAutomaticAction:" target="XfG-lQ-9wD" id="ddS-qk-DSX"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YYn-tZ-NoZ">
+                                <rect key="frame" x="18" y="257" width="240" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically force Game Mode off" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="P2c-1Y-Sb4">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="forceGameModeOffAction:" target="XfG-lQ-9wD" id="d8l-bL-jHO"/>
+                                </connections>
+                            </button>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UoZ-Q5-K2Y">
-                                <rect key="frame" x="20" y="61" width="535" height="157"/>
+                                <rect key="frame" x="20" y="61" width="535" height="189"/>
                                 <clipView key="contentView" id="esc-H7-GeQ">
-                                    <rect key="frame" x="1" y="1" width="533" height="155"/>
+                                    <rect key="frame" x="1" y="1" width="533" height="187"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="6Zq-HM-DBp">
-                                            <rect key="frame" x="0.0" y="0.0" width="533" height="155"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="533" height="187"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="17" height="0.0"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -784,7 +782,7 @@
                                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MBK-Ug-Uws">
                                                                     <rect key="frame" x="3" y="0.0" width="17" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" catalog="system" id="RKA-4X-MXk"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="RKA-4X-MXk"/>
                                                                 </imageView>
                                                                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f7D-vO-e9z">
                                                                     <rect key="frame" x="25" y="0.0" width="491" height="17"/>
@@ -812,7 +810,7 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="HDq-74-5M5">
-                                    <rect key="frame" x="1" y="132" width="533" height="16"/>
+                                    <rect key="frame" x="1" y="141" width="533" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Asz-6n-tKY">
@@ -856,58 +854,39 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="klN-Mm-1xh">
-                                <rect key="frame" x="18" y="221" width="42" height="25"/>
-                                <connections>
-                                    <action selector="forceGameModeOffAction:" target="XfG-lQ-9wD" id="JI4-3p-BqV"/>
-                                </connections>
-                            </switch>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aGB-Cl-TeX">
-                                <rect key="frame" x="64" y="226" width="218" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Automatically force Game Mode off" id="BXD-Hf-Cg2">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="iX2-y7-3Ce" firstAttribute="centerY" secondItem="pM5-jB-uIP" secondAttribute="centerY" id="0Sb-VF-ud9"/>
-                            <constraint firstItem="UoZ-Q5-K2Y" firstAttribute="top" secondItem="klN-Mm-1xh" secondAttribute="bottom" constant="5" id="2qe-8g-S5s"/>
                             <constraint firstItem="SCr-4a-z4x" firstAttribute="top" secondItem="UoZ-Q5-K2Y" secondAttribute="bottom" constant="16" id="3Ot-JG-0xj"/>
-                            <constraint firstItem="ZTT-6V-sYB" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="5zX-Wy-ENN"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="BWt-m2-Jfg" secondAttribute="trailing" constant="20" symbolic="YES" id="66g-Vk-xdZ"/>
+                            <constraint firstItem="zIt-iw-DFy" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="6nv-eV-9My"/>
                             <constraint firstItem="SCr-4a-z4x" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="9Ua-1z-vQ9"/>
+                            <constraint firstItem="PZg-Aq-YLz" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="38" id="9rL-jm-yPE"/>
+                            <constraint firstItem="UoZ-Q5-K2Y" firstAttribute="top" secondItem="YYn-tZ-NoZ" secondAttribute="bottom" constant="8" symbolic="YES" id="AP1-Za-oKa"/>
                             <constraint firstItem="UoZ-Q5-K2Y" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="CdJ-kL-f4J"/>
-                            <constraint firstItem="XGb-pN-kyV" firstAttribute="centerY" secondItem="05b-Dn-4We" secondAttribute="centerY" id="Dmo-69-lR2"/>
-                            <constraint firstItem="1V8-bC-hOP" firstAttribute="centerY" secondItem="ZTT-6V-sYB" secondAttribute="centerY" id="EF1-T9-5Vf"/>
-                            <constraint firstItem="aGB-Cl-TeX" firstAttribute="top" secondItem="iX2-y7-3Ce" secondAttribute="bottom" constant="14" id="FZM-xU-v7R"/>
-                            <constraint firstItem="klN-Mm-1xh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="FkJ-aM-XhK"/>
+                            <constraint firstItem="YYn-tZ-NoZ" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="EuH-3f-DJy"/>
+                            <constraint firstItem="PZg-Aq-YLz" firstAttribute="top" secondItem="BWt-m2-Jfg" secondAttribute="bottom" constant="6" symbolic="YES" id="GCz-rn-e46"/>
                             <constraint firstAttribute="trailing" secondItem="iuL-9d-pkt" secondAttribute="trailing" constant="20" symbolic="YES" id="IvW-pH-ceS"/>
-                            <constraint firstItem="1V8-bC-hOP" firstAttribute="leading" secondItem="ZTT-6V-sYB" secondAttribute="trailing" constant="8" symbolic="YES" id="KNq-Gp-Ias"/>
-                            <constraint firstItem="iX2-y7-3Ce" firstAttribute="leading" secondItem="pM5-jB-uIP" secondAttribute="trailing" constant="8" symbolic="YES" id="QD5-7I-7i9"/>
-                            <constraint firstItem="pM5-jB-uIP" firstAttribute="top" secondItem="ZTT-6V-sYB" secondAttribute="bottom" constant="8" symbolic="YES" id="Teh-hP-czv"/>
-                            <constraint firstItem="05b-Dn-4We" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="Ue4-aF-Pc2"/>
+                            <constraint firstItem="BWt-m2-Jfg" firstAttribute="top" secondItem="zIt-iw-DFy" secondAttribute="bottom" constant="6" symbolic="YES" id="QMo-iB-96X"/>
                             <constraint firstAttribute="bottom" secondItem="SCr-4a-z4x" secondAttribute="bottom" constant="20" symbolic="YES" id="Xj0-rT-Q5A"/>
-                            <constraint firstItem="klN-Mm-1xh" firstAttribute="top" secondItem="pM5-jB-uIP" secondAttribute="bottom" constant="8" symbolic="YES" id="cKe-GJ-eq1"/>
                             <constraint firstAttribute="trailing" secondItem="UoZ-Q5-K2Y" secondAttribute="trailing" constant="20" symbolic="YES" id="eVg-Px-gHK"/>
-                            <constraint firstItem="ZTT-6V-sYB" firstAttribute="top" secondItem="05b-Dn-4We" secondAttribute="bottom" constant="8" symbolic="YES" id="fT5-hY-YLT"/>
                             <constraint firstItem="Yxn-uq-JeB" firstAttribute="leading" secondItem="SCr-4a-z4x" secondAttribute="trailing" constant="8" symbolic="YES" id="fpZ-3V-2Ll"/>
-                            <constraint firstItem="pM5-jB-uIP" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="gMI-Ao-azT"/>
+                            <constraint firstItem="BWt-m2-Jfg" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="gyk-H9-VHZ"/>
                             <constraint firstAttribute="bottom" secondItem="iuL-9d-pkt" secondAttribute="bottom" constant="20" symbolic="YES" id="jGn-E8-jOR"/>
-                            <constraint firstItem="XGb-pN-kyV" firstAttribute="leading" secondItem="05b-Dn-4We" secondAttribute="trailing" constant="8" symbolic="YES" id="myI-yY-DqN"/>
+                            <constraint firstItem="YYn-tZ-NoZ" firstAttribute="top" secondItem="PZg-Aq-YLz" secondAttribute="bottom" constant="6" symbolic="YES" id="kLn-17-LdR"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="zIt-iw-DFy" secondAttribute="trailing" constant="20" symbolic="YES" id="om8-at-Dse"/>
                             <constraint firstItem="Yxn-uq-JeB" firstAttribute="centerY" secondItem="SCr-4a-z4x" secondAttribute="centerY" id="sC5-Ua-wUh"/>
-                            <constraint firstItem="aGB-Cl-TeX" firstAttribute="leading" secondItem="klN-Mm-1xh" secondAttribute="trailing" constant="8" symbolic="YES" id="sgm-05-R2X"/>
-                            <constraint firstItem="05b-Dn-4We" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="uTI-8L-laR"/>
+                            <constraint firstItem="zIt-iw-DFy" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="t9r-C8-BWJ"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="YYn-tZ-NoZ" secondAttribute="trailing" constant="20" symbolic="YES" id="voX-fa-VdN"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="addApplicationButton" destination="SCr-4a-z4x" id="o7Y-Iz-y7K"/>
                         <outlet property="appsThatForceOnTableView" destination="6Zq-HM-DBp" id="hPU-vv-wXJ"/>
-                        <outlet property="forceGameModeOffSwitch" destination="klN-Mm-1xh" id="VSF-Zt-8Z4"/>
-                        <outlet property="forceGameModeOnSwitch" destination="ZTT-6V-sYB" id="TBl-Ux-Bmz"/>
-                        <outlet property="launchOnLoginSwitch" destination="05b-Dn-4We" id="TBX-S3-BzJ"/>
+                        <outlet property="forceGameModeOffCheckbox" destination="YYn-tZ-NoZ" id="bjs-sM-wE6"/>
+                        <outlet property="forceGameModeOnCheckbox" destination="BWt-m2-Jfg" id="dOi-SO-NN1"/>
+                        <outlet property="launchOnLoginCheckbox" destination="zIt-iw-DFy" id="34h-PI-k1N"/>
                         <outlet property="removeApplicationButton" destination="Yxn-uq-JeB" id="Ylq-Sf-d6Y"/>
-                        <outlet property="turnGameModeBackToAutomaticSwitch" destination="pM5-jB-uIP" id="2tm-HU-Q3U"/>
+                        <outlet property="turnGameModeBackToAutomaticCheckbox" destination="PZg-Aq-YLz" id="R3T-mS-AyT"/>
                         <outlet property="versionLabel" destination="iuL-9d-pkt" id="sNw-pU-Wes"/>
                     </connections>
                 </viewController>
@@ -917,7 +896,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="NSActionTemplate" catalog="system" width="20" height="20"/>
+        <image name="NSActionTemplate" width="20" height="20"/>
         <image name="NSAddTemplate" width="18" height="17"/>
         <image name="NSRemoveTemplate" width="18" height="5"/>
     </resources>
