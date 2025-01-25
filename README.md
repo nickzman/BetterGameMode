@@ -45,7 +45,7 @@ If you see an app on the list where the name appears in parentheses, then that m
 
 That said, I can't recommend keeping Game Mode on long-term, especially on a MacBook running on its battery, because it consumes extra battery power. Turning it off when it's not needed ought to reduce the computer's power usage.
 
-If you want to force Game Mode from ever activating, then disable **Automatically force Game Mode on when one of these apps are launched**, and enable **Automatically force Game Mode off**.
+If you want to prevent Game Mode from ever activating while BetterGameMode is running, then disable **Automatically force Game Mode on when one of these apps are launched**, and enable **Automatically force Game Mode off when BetterGameMode is launched**.
 
 ## Q&A
 

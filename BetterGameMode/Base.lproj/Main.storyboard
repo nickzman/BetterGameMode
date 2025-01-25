@@ -741,8 +741,8 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YYn-tZ-NoZ">
-                                <rect key="frame" x="18" y="257" width="240" height="18"/>
-                                <buttonCell key="cell" type="check" title="Automatically force Game Mode off" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="P2c-1Y-Sb4">
+                                <rect key="frame" x="18" y="257" width="459" height="18"/>
+                                <buttonCell key="cell" type="check" title="Automatically force Game Mode off when BetterGameMode is launched" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="P2c-1Y-Sb4">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
