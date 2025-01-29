@@ -6,7 +6,7 @@ Game Mode is a feature of macOS which, when enabled, makes the kernel give high 
 
 Game Mode is supposed to automatically start when the user launches a game. However, this does not happen with every game, most notably, some legacy games, as well as emulators (such as OpenEmu or RetroArch), streaming games (such as GeForce NOW or PS Remote Play), games launched by Wine front ends (such as CrossOver or Whisky), or games running in virtual machines (such as Parallels Desktop or VMware Fusion).
 
-BetterGameMode requires an Apple Silicon Mac, macOS 14.0 (Sonoma) or later, and Xcode 15.0 or later. The Apple Silicon requirement is because Game Mode is not available on Intel Macs. The Xcode requirement is because starting and stopping Game Mode on macOS requires using a private API to talk to `gamepolicyd`, the OS background task that ultimately controls Game Mode, and the only tool that can use that API is the `gamepolicyctl` tool that comes with Xcode. BetterGameMode requires that tool in order to function. For legal reasons, I cannot ship BetterGameMode with the tool included.
+BetterGameMode requires an Apple Silicon Mac, macOS 14.0 (Sonoma) or later, and Xcode 15.0 or later. The Apple Silicon requirement is because Game Mode is not available on Intel Macs. The Xcode requirement is because starting and stopping Game Mode on macOS requires using a private API to talk to `gamepolicyd`, the macOS background task that ultimately controls Game Mode, and the only tool that can use that API is the `gamepolicyctl` tool that comes with Xcode. BetterGameMode requires that tool in order to function. For legal reasons, I cannot ship BetterGameMode with the tool included.
 
 ## How to Use BetterGameMode
 
@@ -18,7 +18,7 @@ In this menu bar, you can see if Game Mode is currently on or off, and whether G
 
 You can force Game Mode on by clicking on **Force Enable Game Mode**, and prevent it from turning on by clicking on **Force Disable Game Mode**. Switch it back to **Automatically Enable Game Mode** to restore the default behavior. This preference does not survive a logout; it will always go back to automatic the next time you sign into your Mac.
 
-When Game Mode is enabled by either BetterGameMode or the command line, the notification & menu in the menu bar that normally appear when Game Mode automatically starts do not appear. If you want to independently verify that Game Mode is on, you can open Terminal and type `xcrun gamepolicyctl game-mode status` at the command line to see the current status.
+When Game Mode is enabled by either BetterGameMode or the command line, the notification & menu in the menu bar that normally appear when Game Mode automatically starts do not appear. If you want to independently verify that Game Mode is on, you can open Terminal and type `xcrun gamepolicyctl game-mode status` at the command line to see the current status. You can also look for log entries from `gamepolicyd` in the Console log.
 
 ## BetterGameMode Settings
 
@@ -30,14 +30,14 @@ Press the **+** button to add an app to the list. If there's an app you wish to 
 
 The list is by default populated with some common third-party Mac apps that, for whatever reason, macOS does not automatically activate Game Mode when they are launched, but would benefit from Game Mode being on when they are launched. They currently are:
 
-- CrossOver (including CrossOver Preview)
-- GeForce NOW
-- Heroic Games Launcher
-- Parallels Desktop (App Store version and non-App Store version; they have two different application bundle identifiers)
-- PS Remote Play
-- RetroArch
-- VMware Fusion
-- Whisky
+- [CrossOver](https://www.codeweavers.com/crossover) (including CrossOver Preview)
+- [GeForce NOW](https://play.geforcenow.com)
+- [Heroic Games Launcher](https://heroicgameslauncher.com)
+- Parallels Desktop  ([App Store version](https://apps.apple.com/us/app/parallels-desktop/id1085114709?mt=12) and [non-App Store version](https://www.parallels.com/products/desktop/); they have two different application bundle identifiers)
+- [PS Remote Play](https://remoteplay.dl.playstation.net/remoteplay/)
+- [RetroArch](https://www.retroarch.com)
+- [VMware Fusion](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
+- [Whisky](https://getwhisky.app)
 
 If you see an app on the list where the name appears in parentheses, then that means the app is not currently installed on your Mac. Feel free to remove it if you wish. If the app is ever (re)installed, then its name will show up on the list.
 
@@ -51,9 +51,9 @@ If you want to prevent Game Mode from ever activating while BetterGameMode is ru
 
 ### Can BetterGameMode force on Game Mode when a Windows game starts in Wine, or in a virtual machine?
 
-Unfortunately no. The app is not notified when a Windows game is started.
+Unfortunately no. Normally, BetterGameMode is notified by macOS whenever an app is launched, but the notification is not sent when something launches in Wine. And BetterGameMode has no way of knowing what is going on inside a virtual machine running on your Mac.
 
-You can still use BetterGameMode with a Wine front end or virtual machine; you just need to force Game Mode on when that front end starts up.
+You can still use BetterGameMode with a Wine front end or virtual machine; you just need to force Game Mode on when that front end starts up. This is why I added CrossOver, etc. as apps that start Game Mode by default.
 
 ### Can BetterGameMode force on Game Mode when I visit a certain website in my browser?
 
@@ -62,6 +62,14 @@ No, for obvious privacy reasons.
 ### I forced Game Mode off, but when I launch a game, macOS puts up a notification & menu item saying it is on. What gives?
 
 I noticed that, too, in macOS 15. I think it may be a bug in the macOS menu item that appears when a game is launched that automatically starts Game Mode (outside of BetterGameMode). If you read the console log, and search for log entries from `gamepolicyd`, or run `xcrun gamepolicyctl game-mode status` from the command line, you can see that Game Mode wasn't really enabled.
+
+### I have Xcode installed, but BetterGameMode says it is not installed. Is this a bug?
+
+No; this can happen if you installed Xcode in a place other than `/Applications` (the Applications folder on the boot volume). If you did this, then you can either:
+
+1. Move Xcode to the Applications folder
+2. Use the `Xcode-select` tool from the command line to point the system to the place where you have installed Xcode
+3. Put a symbolic link to Xcode in the Applications folder (you can use my [SymbolicLinker](https://github.com/nickzman/SymbolicLinker) tool to do this from the Finder)
 
 ## BetterGameMode & Your Privacy
 
