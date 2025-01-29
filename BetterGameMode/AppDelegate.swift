@@ -19,20 +19,20 @@ import UserNotifications
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemValidation {
 	private enum IsGamePolicyCtlInstalled: Int {
-		case unknown
-		case notInstalled
-		case installed
+		case unknown		// we haven't checked yet, or our attempt to check failed
+		case notInstalled	// gamepolicyctl is not installed; user needs to install Xcode
+		case installed		// gamepolicyctl is installed
 	}
 	private enum GameModeEnablementPolicy: Int {
-		case unknown
-		case automatic
-		case disabled
+		case unknown	// we haven't checked yet, or our attempt to check failed
+		case automatic	// macOS will automatically start Game Mode when the user launches a game full screen
+		case disabled	// macOS will not automatically start Game Mode
 	}
 	private enum IsGameModeEnabled: Int {
-		case unknown
-		case disabled
-		case enabled
-		case temporarilyEnabled
+		case unknown			// we haven't checked yet, or our attempt to check failed
+		case disabled			// Game Mode has been manually disabled
+		case enabled			// Game Mode has been automatically or manually enabled
+		case temporarilyEnabled	// Game Mode is enabled right now, but will disable after a timeout (this usually happens when a game that automatically started Game Mode is put in the background)
 	}
 	private var appLaunchedNotificationObserver: NSObjectProtocol?
 	private var appTerminatedNotificationObserver: NSObjectProtocol?
@@ -327,6 +327,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			return (.unknown, .unknown, .unknown)
 		}
 		guard let outputString = String(data: output ?? Data(), encoding: .utf8) else {
+			Logger().error("Failed to read output from gamepolicyctl; the output could not be read as valid UTF-8.")
 			return (.unknown, .unknown, .unknown)
 		}
 		var gameMode: IsGameModeEnabled = .unknown
@@ -336,6 +337,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			return (.notInstalled, .unknown, .unknown)
 		}
 		
+		// gamepolicyctl uses an escape sequence to add color to the text. We don't care about the color, so use regular expression matching in order to ignore the color escape sequence using (.+).
 		do {
 			if outputString.contains(try Regex("Game mode is(.+)on(.+)Game mode will soon turn off")) {
 				gameMode = .temporarilyEnabled
