@@ -73,7 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { (granted, error) in
 		}
 		// Install notifications for when apps are launched and terminated, if gamepolicyctl is installed:
-		self.updateStateAndConditionallyInstallNotificationWatchers()
+		self.updateStateAndConditionallyInstallNotificationWatchers(.background)
 		// Watch for preference changes:
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsChangedNotification), name: UserDefaults.didChangeNotification, object: nil)
 		// Also check to see if any currently launched apps should trigger Game Mode. Do this after registering the notification to reduce the chance of an app slipping through due to a race condition.
@@ -94,7 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 	// MARK: Menu delegate
 	
 	func menuNeedsUpdate(_ menu: NSMenu) {
-		updateStateAndConditionallyInstallNotificationWatchers()
+		updateStateAndConditionallyInstallNotificationWatchers(.userInitiated)
 		
 		// Build the menu manually based on what running gamepolicyctl tells us:
 		menu.removeAllItems()
@@ -306,7 +306,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		}
 	}
 	
-	private func gamePolicyCtlStatus() -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
+	private func gamePolicyCtlStatus(_ qualityOfService: QualityOfService) -> (isInstalled: IsGamePolicyCtlInstalled, gameMode: IsGameModeEnabled, enablementPolicy: GameModeEnablementPolicy) {
 		let process = Process()
 		let pipe = Pipe()
 		let fileHandle = pipe.fileHandleForReading
@@ -315,6 +315,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		process.arguments = ["gamepolicyctl", "game-mode", "status"]
 		process.standardOutput = pipe
 		process.standardError = pipe
+		process.qualityOfService = qualityOfService
 		do {
 			try process.run()
 			process.waitUntilExit()
@@ -372,6 +373,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		process.arguments = ["gamepolicyctl", "game-mode", "set", policyString]
 		process.standardOutput = pipe
 		process.standardError = pipe
+		process.qualityOfService = .userInitiated
 		do {
 			try process.run()
 			process.waitUntilExit()
@@ -393,8 +395,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		return outputString.contains(policyString)
 	}
 	
-	private func updateStateAndConditionallyInstallNotificationWatchers() {
-		let status = gamePolicyCtlStatus()
+	private func updateStateAndConditionallyInstallNotificationWatchers(_ qualityOfService: QualityOfService) {
+		let status = gamePolicyCtlStatus(qualityOfService)
 		
 		if (status.isInstalled == .installed) {
 			weak var weakSelf = self
