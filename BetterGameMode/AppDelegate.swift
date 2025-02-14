@@ -315,8 +315,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		process.arguments = ["gamepolicyctl", "game-mode", "status"]
 		process.standardOutput = pipe
 		process.standardError = pipe
-		process.launch()
-		process.waitUntilExit()
+		do {
+			try process.run()
+			process.waitUntilExit()
+		} catch {
+			Logger().error("Failed to launch xcrun due to an error: \(error)")
+			return (.unknown, .unknown, .unknown)
+		}
 		
 		let output: Data?
 		
@@ -367,8 +372,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 		process.arguments = ["gamepolicyctl", "game-mode", "set", policyString]
 		process.standardOutput = pipe
 		process.standardError = pipe
-		process.launch()
-		process.waitUntilExit()
+		do {
+			try process.run()
+			process.waitUntilExit()
+		} catch {
+			Logger().error("Failed to launch xcrun due to an error: \(error)")
+			return false
+		}
 		
 		let output: Data?
 		
