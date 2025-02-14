@@ -139,14 +139,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenuItemVa
 			case .disabled:
 				menu.addItem(withTitle: NSLocalizedString("MenuGameModeOff", comment: ""), action: nil, keyEquivalent: "")
 			}
+			menu.addItem(NSMenuItem.separator())
 			
-			menu.addItem(NSMenuItem.separator())
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceAutomatic", comment: ""), action: #selector(automaticallyEnableGameModeAction), keyEquivalent: "")
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOn", comment: ""), action: #selector(enableGameModeAction), keyEquivalent: "")
-			menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameModeAction), keyEquivalent: "")
-			menu.addItem(NSMenuItem.separator())
-			menu.addItem(withTitle: NSLocalizedString("MenuPrefs", comment: ""), action: #selector(openPreferences), keyEquivalent: "")
-			menu.addItem(NSMenuItem.separator())
+			if self.gamePolicyCtlInstalled == .installed {
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceAutomatic", comment: ""), action: #selector(automaticallyEnableGameModeAction), keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOn", comment: ""), action: #selector(enableGameModeAction), keyEquivalent: "")
+				menu.addItem(withTitle: NSLocalizedString("MenuGameModeForceOff", comment: ""), action: #selector(disableGameModeAction), keyEquivalent: "")
+				menu.addItem(NSMenuItem.separator())
+				menu.addItem(withTitle: NSLocalizedString("MenuPrefs", comment: ""), action: #selector(openPreferences), keyEquivalent: "")
+				menu.addItem(NSMenuItem.separator())
+			}
 		}
 		menu.addItem(withTitle: NSLocalizedString("MenuQuit", comment: ""), action: #selector(NSApplication.terminate), keyEquivalent: "")
 	}
